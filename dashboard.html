@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Executive Summary Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .dashboard-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            padding: 30px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+            border: 1px solid #f0f0f0;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.12);
+        }
+
+        .card-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            text-align: center;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .achievements-list {
+            list-style: none;
+            space-y: 15px;
+        }
+
+        .achievements-list li {
+            margin-bottom: 20px;
+            padding: 15px;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-radius: 10px;
+            border-left: 4px solid #4CAF50;
+        }
+
+        .achievement-title {
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 8px;
+            font-size: 1.1rem;
+        }
+
+        .achievement-desc {
+            color: #5a6c7d;
+            line-height: 1.5;
+        }
+
+        .kpi-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        .kpi-table th {
+            background: #404E67;
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 700;
+            font-size: 1rem;
+        }
+
+        .kpi-table td {
+            padding: 15px;
+            border-bottom: 1px solid #e9ecef;
+            color: #2c3e50;
+        }
+
+        .kpi-table tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        .kpi-table tr:hover {
+            background: #e3f2fd;
+            transition: background 0.3s ease;
+        }
+
+        .next-steps-list {
+            list-style: none;
+        }
+
+        .next-steps-list li {
+            margin-bottom: 20px;
+            padding: 15px;
+            background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);
+            border-radius: 10px;
+            border-left: 4px solid #ff9800;
+        }
+
+        .step-title {
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 8px;
+            font-size: 1.1rem;
+        }
+
+        .step-desc {
+            color: #5a6c7d;
+            line-height: 1.5;
+        }
+
+        .status-summary {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .status-number {
+            font-size: 3rem;
+            font-weight: 700;
+            color: #4CAF50;
+            display: block;
+        }
+
+        .status-label {
+            font-size: 1.1rem;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+                padding: 20px;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .card {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <div class="header">
+            <h1>Executive Summary Dashboard</h1>
+            <p>Mid-Year 2025 Performance Overview</p>
+        </div>
+
+        <div class="dashboard-grid">
+            <!-- KPI Status Chart -->
+            <div class="card">
+                <h2 class="card-title">Overall KPI Status</h2>
+                <div class="chart-container">
+                    <canvas id="kpiChart" width="300" height="300"></canvas>
+                </div>
+                <div class="status-summary">
+                    <span class="status-number">2/7</span>
+                    <div class="status-label">KPIs Completed</div>
+                </div>
+            </div>
+
+            <!-- Key Achievements -->
+            <div class="card">
+                <h2 class="card-title">Key Achievements & Initiatives</h2>
+                <ul class="achievements-list">
+                    <li>
+                        <div class="achievement-title">🤖 AI Tool Adoption</div>
+                        <div class="achievement-desc">Successfully utilized Botnoi Voice and Canva to create dashboards and improve reporting efficiency.</div>
+                    </li>
+                    <li>
+                        <div class="achievement-title">📋 Process Support</div>
+                        <div class="achievement-desc">Provided key documentation support for the E-PS department and improved communication channels.</div>
+                    </li>
+                    <li>
+                        <div class="achievement-title">🎓 Learning Culture Promotion</div>
+                        <div class="achievement-desc">Organized AI training and shared knowledge with the team to enhance overall work performance.</div>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- KPIs Awaiting Data -->
+            <div class="card">
+                <h2 class="card-title">KPIs Awaiting Data from Other Departments</h2>
+                <table class="kpi-table">
+                    <thead>
+                        <tr>
+                            <th>KPI Item</th>
+                            <th>Awaiting Data From</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Internal Satisfaction</td>
+                            <td>HR</td>
+                        </tr>
+                        <tr>
+                            <td>TRIR</td>
+                            <td>HSE</td>
+                        </tr>
+                        <tr>
+                            <td>Employee Engagement Survey</td>
+                            <td>HR</td>
+                        </tr>
+                        <tr>
+                            <td>E-PS Monthly Meeting</td>
+                            <td>N/A - To be proposed</td>
+                        </tr>
+                        <tr>
+                            <td>Phishing Report</td>
+                            <td>IT Security</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Next Steps -->
+            <div class="card">
+                <h2 class="card-title">Proposed Next Steps</h2>
+                <ul class="next-steps-list">
+                    <li>
+                        <div class="step-title">🤝 Cross-Department Coordination</div>
+                        <div class="step-desc">Proactively follow up with HR, HSE, and IT Security to accelerate data acquisition for pending KPIs.</div>
+                    </li>
+                    <li>
+                        <div class="step-title">⚡ Meeting Optimization</div>
+                        <div class="step-desc">Propose changing the E-PS monthly meeting to a quarterly basis to improve efficiency.</div>
+                    </li>
+                    <li>
+                        <div class="step-title">📚 Continuous Learning</div>
+                        <div class="step-desc">Develop a formal plan for AI training and knowledge sharing within the team.</div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Create the KPI Status Pie Chart
+        const ctx = document.getElementById('kpiChart').getContext('2d');
+        const kpiChart = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Completed', 'Not Started'],
+                datasets: [{
+                    data: [28.6, 71.4],
+                    backgroundColor: ['#4CAF50', '#FFC107'],
+                    borderWidth: 0,
+                    cutout: '60%'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            padding: 20,
+                            font: {
+                                size: 14,
+                                weight: '600'
+                            }
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                const label = context.label || '';
+                                const value = context.parsed;
+                                const count = context.dataIndex === 0 ? 2 : 5;
+                                return `${label}: ${value}% (${count} KPIs)`;
+                            }
+                        }
+                    }
+                },
+                animation: {
+                    animateRotate: true,
+                    duration: 2000
+                }
+            }
+        });
+
+        // Add hover effects to table rows
+        const tableRows = document.querySelectorAll('.kpi-table tbody tr');
+        tableRows.forEach(row => {
+            row.addEventListener('mouseenter', function() {
+                this.style.transform = 'scale(1.02)';
+                this.style.transition = 'transform 0.2s ease';
+            });
+            
+            row.addEventListener('mouseleave', function() {
+                this.style.transform = 'scale(1)';
+            });
+        });
+
+        // Add animation to cards on scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.card').forEach(card => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(20px)';
+            card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            observer.observe(card);
+        });
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'96a4839ff49fd017',t:'MTc1NDM3ODI0MC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
